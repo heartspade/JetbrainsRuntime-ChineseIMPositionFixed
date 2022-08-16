@@ -11,7 +11,7 @@ git clone https://github.com/uLxy/JetbrainsRuntime-ChineseIMPositionFixed.git
 ```shell
 cd JetBrainsRuntime
 git checkout 04d16d83475b8d47edff2a7314942a8c7b746c4f
-git apply ../JetbrainsRuntime-ChineseIMPositionFixed/0001-fix-fcitx-window-position-issue.patch
+git apply ../JetbrainsRuntime-ChineseIMPositionFixed/fix-fcitx-window-position-issue.patch
 ```
 
 ## 构建 OpenJDK
