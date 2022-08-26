@@ -19,7 +19,7 @@ index 03b3bc7e9bd..94ab360836a 100644
       * Returns the number of columns in the TextArea.
       *
 diff --git a/src/java.desktop/share/classes/javax/swing/JTextField.java b/src/java.desktop/share/classes/javax/swing/JTextField.java
-index 0d66209d8af..9a68cedf310 100644
+index 0d66209d8af..5354fdd8e76 100644
 --- a/src/java.desktop/share/classes/javax/swing/JTextField.java
 +++ b/src/java.desktop/share/classes/javax/swing/JTextField.java
 @@ -427,6 +427,15 @@ public class JTextField extends JTextComponent implements SwingConstants {
@@ -28,7 +28,7 @@ index 0d66209d8af..9a68cedf310 100644
  
 +    /**
 +    * fix fcitx position
-+    * 
++    *
 +    * @return font metrics
 +    */
 +    public FontMetrics getFontMetrics() {
@@ -39,7 +39,7 @@ index 0d66209d8af..9a68cedf310 100644
       * Returns the preferred size <code>Dimensions</code> needed for this
       * <code>TextField</code>.  If a non-zero number of columns has been
 diff --git a/src/java.desktop/share/classes/sun/awt/im/InputContext.java b/src/java.desktop/share/classes/sun/awt/im/InputContext.java
-index 237164a9d42..a1c2754ee82 100644
+index 237164a9d42..269e5704b3c 100644
 --- a/src/java.desktop/share/classes/sun/awt/im/InputContext.java
 +++ b/src/java.desktop/share/classes/sun/awt/im/InputContext.java
 @@ -28,6 +28,7 @@ package sun.awt.im;
@@ -93,7 +93,7 @@ index 237164a9d42..a1c2754ee82 100644
              // fall through
  
          default:
-@@ -360,6 +375,63 @@ public class InputContext extends java.awt.im.InputContext
+@@ -360,6 +375,62 @@ public class InputContext extends java.awt.im.InputContext
          }
      }
  
@@ -133,7 +133,6 @@ index 237164a9d42..a1c2754ee82 100644
 +                    ((InputMethodContext)this).setCompositionAreaVisible(true);
 +                    compositionAreaHidden = false;
 +                }
-+                
 +            }
 +        }
 +    }
@@ -144,7 +143,7 @@ index 237164a9d42..a1c2754ee82 100644
 +    private boolean checkDirectionKey(KeyEvent event) {
 +        return true;
 +    }
-+    
++
 +    /**
 +     * fix fcitx position
 +     */
@@ -158,7 +157,7 @@ index 237164a9d42..a1c2754ee82 100644
       * Activates the current input method of this input context, and grabs
       * the composition area for use by this input context.
 diff --git a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
-index e3b1b2d408a..6b08571e09e 100644
+index e3b1b2d408a..c0028720814 100644
 --- a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 +++ b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 @@ -28,10 +28,21 @@ package sun.awt.X11;
@@ -183,7 +182,7 @@ index e3b1b2d408a..6b08571e09e 100644
  import sun.awt.AWTAccessor;
  import sun.awt.X11InputMethod;
  
-@@ -86,21 +97,98 @@ public class XInputMethod extends X11InputMethod {
+@@ -86,21 +97,94 @@ public class XInputMethod extends X11InputMethod {
  
      private static volatile long xicFocus;
  
@@ -237,9 +236,7 @@ index e3b1b2d408a..6b08571e09e 100644
 +                    }
 +                }else {
 +                    method_getEditor = this.awtFocussedComponent.getClass().getMethod("getEditor");
-+
 +                    editor = method_getEditor.invoke(this.awtFocussedComponent);
-+        
 +                    method_getFontMetrics = editor.getClass().getMethod("getFontMetrics",int.class);
 +                    font_metrics = (FontMetrics)method_getFontMetrics.invoke(editor, 0);
 +                    font_height = font_metrics.getHeight();
@@ -250,10 +247,8 @@ index e3b1b2d408a..6b08571e09e 100644
 +                    caret_x = (int)pd.x;
 +                    caret_y = (int)pd.y;
 +                }
-+                
 +
 +                Method method_getLocationOnScreen = this.awtFocussedComponent.getClass().getMethod("getLocationOnScreen");
-+                
 +                Point point = (Point)method_getLocationOnScreen.invoke(this.awtFocussedComponent);
 +
 +                Method method_getNativeContainer = Component.class.getDeclaredMethod("getNativeContainer");
@@ -283,7 +278,7 @@ index e3b1b2d408a..6b08571e09e 100644
  /* XAWT_HACK  FIX ME!
     do NOT call client code!
  */
-@@ -253,6 +341,6 @@ public class XInputMethod extends X11InputMethod {
+@@ -253,6 +337,6 @@ public class XInputMethod extends X11InputMethod {
      private native boolean recreateXICNative(long window, long px11data, int ctxid);
      private native int releaseXICNative(long px11data);
      private native void setXICFocusNative(long window,
@@ -292,7 +287,7 @@ index e3b1b2d408a..6b08571e09e 100644
      private native void adjustStatusWindow(long window);
  }
 diff --git a/src/java.desktop/unix/classes/sun/awt/X11InputMethod.java b/src/java.desktop/unix/classes/sun/awt/X11InputMethod.java
-index d9bed439688..6337ded171d 100644
+index d9bed439688..f09697d5a9c 100644
 --- a/src/java.desktop/unix/classes/sun/awt/X11InputMethod.java
 +++ b/src/java.desktop/unix/classes/sun/awt/X11InputMethod.java
 @@ -33,6 +33,7 @@ import java.awt.AWTException;
@@ -333,7 +328,7 @@ index d9bed439688..6337ded171d 100644
 +            setXICTextCursorOffXY(getPeer(awtFocussedComponent));
 +
 +        }
-+        awtFocussedComponent = component;    
++        awtFocussedComponent = component;
 +        // ComponentPeer lastXICFocussedComponentPeer = null;
 +        // if (lastXICFocussedComponent != null) {
 +        //     lastXICFocussedComponentPeer = getPeer(lastXICFocussedComponent);
@@ -347,7 +342,7 @@ index d9bed439688..6337ded171d 100644
      protected abstract int releaseXIC();
      private static native boolean recreateX11InputMethod();
 diff --git a/src/java.desktop/unix/native/libawt_xawt/awt/awt_InputMethod.c b/src/java.desktop/unix/native/libawt_xawt/awt/awt_InputMethod.c
-index e63741f583e..1afd3d3484e 100644
+index e63741f583e..c9fa427a1f8 100644
 --- a/src/java.desktop/unix/native/libawt_xawt/awt/awt_InputMethod.c
 +++ b/src/java.desktop/unix/native/libawt_xawt/awt/awt_InputMethod.c
 @@ -434,13 +434,17 @@ setXICFocus(XIC ic, unsigned short req)
@@ -388,7 +383,7 @@ index e63741f583e..1afd3d3484e 100644
 +        int positions[2] = {100,50};
 +        if (arr) {
 +            int length = (*env)->GetArrayLength(env,arr);
-+            int *addArr = (*env)->GetIntArrayElements(env, arr, NULL);      
++            int *addArr = (*env)->GetIntArrayElements(env, arr, NULL);
 +            for (int i= 0; i < length; ++i) {
 +                positions[i] = *(addArr + i);
 +            }
