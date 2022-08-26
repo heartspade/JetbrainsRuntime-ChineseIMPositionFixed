@@ -157,7 +157,7 @@ index 237164a9d42..269e5704b3c 100644
       * Activates the current input method of this input context, and grabs
       * the composition area for use by this input context.
 diff --git a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
-index e3b1b2d408a..c0028720814 100644
+index e3b1b2d408a..be28ae02e07 100644
 --- a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 +++ b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 @@ -28,10 +28,21 @@ package sun.awt.X11;
@@ -182,7 +182,7 @@ index e3b1b2d408a..c0028720814 100644
  import sun.awt.AWTAccessor;
  import sun.awt.X11InputMethod;
  
-@@ -86,21 +97,94 @@ public class XInputMethod extends X11InputMethod {
+@@ -86,21 +97,103 @@ public class XInputMethod extends X11InputMethod {
  
      private static volatile long xicFocus;
  
@@ -243,9 +243,19 @@ index e3b1b2d408a..c0028720814 100644
 +                    Method getCaretLocations = editor.getClass().getMethod("getCaretLocations", boolean.class);
 +                    Object[] locations = (Object[])getCaretLocations.invoke(editor, false);
 +                    Field point = locations[0].getClass().getField("myPoint");
-+                    Point2D.Double pd = (Point2D.Double)point.get(locations[0]);
-+                    caret_x = (int)pd.x;
-+                    caret_y = (int)pd.y;
++
++                    Object o = point.get(locations[0]);
++                    if (o instanceof Point2D.Double) {
++                        System.out.println("o instanceof Point2D.Double = true");
++                        Point2D.Double pd = (Point2D.Double)point.get(locations[0]);
++                        caret_x = (int)pd.x;
++                        caret_y = (int)pd.y;
++                    } else if (o instanceof Point) {
++                        System.out.println("o instanceof Point = true");
++                        Point pd = (Point) point.get(locations[0]);
++                        caret_x = pd.x;
++                        caret_y = pd.y;
++                    }
 +                }
 +
 +                Method method_getLocationOnScreen = this.awtFocussedComponent.getClass().getMethod("getLocationOnScreen");
@@ -274,11 +284,10 @@ index e3b1b2d408a..c0028720814 100644
 +        }
 +        return result;
 +    }
-+
  /* XAWT_HACK  FIX ME!
     do NOT call client code!
  */
-@@ -253,6 +337,6 @@ public class XInputMethod extends X11InputMethod {
+@@ -253,6 +346,6 @@ public class XInputMethod extends X11InputMethod {
      private native boolean recreateXICNative(long window, long px11data, int ctxid);
      private native int releaseXICNative(long px11data);
      private native void setXICFocusNative(long window,
