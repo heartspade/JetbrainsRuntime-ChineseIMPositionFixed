@@ -10,13 +10,13 @@ git clone https://github.com/uLxy/JetbrainsRuntime-ChineseIMPositionFixed.git
 ## 安装补丁
 ```shell
 cd JetBrainsRuntime
-git checkout 04d16d83475b8d47edff2a7314942a8c7b746c4f
+git checkout edb1fef44234290764e0c1a7c96fdd746236a247
 git apply ../JetbrainsRuntime-ChineseIMPositionFixed/fix-fcitx-window-position.patch
 ```
 
 ## 构建 OpenJDK
 ``` shell
-bash configure # --with-boot-jdk=/opt/java/jdk-18.0.2
+bash configure # --with-boot-jdk=/opt/java/jdk-18.0.2.1
 make images
 ```
 
