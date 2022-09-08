@@ -157,20 +157,23 @@ index 237164a9d42..269e5704b3c 100644
       * Activates the current input method of this input context, and grabs
       * the composition area for use by this input context.
 diff --git a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
-index e3b1b2d408a..be28ae02e07 100644
+index e3b1b2d408a..1db4d9d7eae 100644
 --- a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 +++ b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
-@@ -28,10 +28,21 @@ package sun.awt.X11;
+@@ -28,9 +28,23 @@ package sun.awt.X11;
  import java.awt.AWTException;
  import java.awt.Component;
  import java.awt.Container;
 +import java.awt.geom.Point2D;
++import java.awt.geom.AffineTransform;
 +import java.awt.FontMetrics;
 +import java.awt.Point;
  import java.awt.Rectangle;
  import java.awt.im.spi.InputMethodContext;
  import java.awt.peer.ComponentPeer;
- 
++import java.awt.GraphicsConfiguration;
++import java.awt.GraphicsEnvironment;
++
 +import java.lang.reflect.Field;
 +import java.lang.reflect.InvocationTargetException;
 +import java.lang.reflect.Method;
@@ -178,11 +181,10 @@ index e3b1b2d408a..be28ae02e07 100644
 +import javax.swing.JTextArea;
 +import javax.swing.JTextField;
 +import javax.swing.text.JTextComponent;
-+
+ 
  import sun.awt.AWTAccessor;
  import sun.awt.X11InputMethod;
- 
-@@ -86,21 +97,103 @@ public class XInputMethod extends X11InputMethod {
+@@ -86,21 +100,106 @@ public class XInputMethod extends X11InputMethod {
  
      private static volatile long xicFocus;
  
@@ -246,7 +248,6 @@ index e3b1b2d408a..be28ae02e07 100644
 +
 +                    Object o = point.get(locations[0]);
 +                    if (o instanceof Point2D.Double) {
-+                        System.out.println("o instanceof Point2D.Double = true");
 +                        Point2D.Double pd = (Point2D.Double)point.get(locations[0]);
 +                        caret_x = (int)pd.x;
 +                        caret_y = (int)pd.y;
@@ -265,7 +266,11 @@ index e3b1b2d408a..be28ae02e07 100644
 +                method_getNativeContainer.setAccessible(true);
 +                Container c = (Container)method_getNativeContainer.invoke(awtFocussedComponent);
 +                if(c!=null) {
-+                    result = new int[]{2*(point.x - peer.getLocationOnScreen().x + caret_x), 2*(point.y - peer.getLocationOnScreen().y + font_height + caret_y)};
++                    GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
++                    AffineTransform transform = gc.getDefaultTransform();
++                    int x = (int) (transform.getScaleX() * (point.x - peer.getLocationOnScreen().x + caret_x));
++                    int y = (int) (transform.getScaleY() * (point.y - peer.getLocationOnScreen().y + font_height + caret_y));
++                    result = new int[]{x, y};
 +                }
 +                return result;
 +            } catch (IllegalAccessException e) {
@@ -287,7 +292,7 @@ index e3b1b2d408a..be28ae02e07 100644
  /* XAWT_HACK  FIX ME!
     do NOT call client code!
  */
-@@ -253,6 +346,6 @@ public class XInputMethod extends X11InputMethod {
+@@ -253,6 +352,6 @@ public class XInputMethod extends X11InputMethod {
      private native boolean recreateXICNative(long window, long px11data, int ctxid);
      private native int releaseXICNative(long px11data);
      private native void setXICFocusNative(long window,
