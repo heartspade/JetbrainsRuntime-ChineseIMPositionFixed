@@ -1,5 +1,5 @@
 diff --git a/src/java.desktop/share/classes/javax/swing/JTextArea.java b/src/java.desktop/share/classes/javax/swing/JTextArea.java
-index 03b3bc7e9bd..94ab360836a 100644
+index ecc9342f05a..15bb6a953ea 100644
 --- a/src/java.desktop/share/classes/javax/swing/JTextArea.java
 +++ b/src/java.desktop/share/classes/javax/swing/JTextArea.java
 @@ -562,6 +562,15 @@ public class JTextArea extends JTextComponent {
@@ -19,7 +19,7 @@ index 03b3bc7e9bd..94ab360836a 100644
       * Returns the number of columns in the TextArea.
       *
 diff --git a/src/java.desktop/share/classes/javax/swing/JTextField.java b/src/java.desktop/share/classes/javax/swing/JTextField.java
-index 0d66209d8af..5354fdd8e76 100644
+index 3abe09d0565..27e7eab53e6 100644
 --- a/src/java.desktop/share/classes/javax/swing/JTextField.java
 +++ b/src/java.desktop/share/classes/javax/swing/JTextField.java
 @@ -427,6 +427,15 @@ public class JTextField extends JTextComponent implements SwingConstants {
@@ -39,7 +39,7 @@ index 0d66209d8af..5354fdd8e76 100644
       * Returns the preferred size <code>Dimensions</code> needed for this
       * <code>TextField</code>.  If a non-zero number of columns has been
 diff --git a/src/java.desktop/share/classes/sun/awt/im/InputContext.java b/src/java.desktop/share/classes/sun/awt/im/InputContext.java
-index 237164a9d42..269e5704b3c 100644
+index bb955dc5089..73c829d1ff9 100644
 --- a/src/java.desktop/share/classes/sun/awt/im/InputContext.java
 +++ b/src/java.desktop/share/classes/sun/awt/im/InputContext.java
 @@ -28,6 +28,7 @@ package sun.awt.im;
@@ -157,7 +157,7 @@ index 237164a9d42..269e5704b3c 100644
       * Activates the current input method of this input context, and grabs
       * the composition area for use by this input context.
 diff --git a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
-index e3b1b2d408a..1db4d9d7eae 100644
+index 4244812ceb0..08480ed33c8 100644
 --- a/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 +++ b/src/java.desktop/unix/classes/sun/awt/X11/XInputMethod.java
 @@ -28,9 +28,23 @@ package sun.awt.X11;
@@ -184,9 +184,9 @@ index e3b1b2d408a..1db4d9d7eae 100644
  
  import sun.awt.AWTAccessor;
  import sun.awt.X11InputMethod;
-@@ -86,21 +100,106 @@ public class XInputMethod extends X11InputMethod {
+@@ -86,21 +100,107 @@ public class XInputMethod extends X11InputMethod {
  
-     private static volatile long xicFocus;
+     private static volatile long xicFocus = 0;
  
 +    public void setXICTextCursorOffXY(ComponentPeer peer) {
 +        if (peer == null) {
@@ -216,7 +216,7 @@ index e3b1b2d408a..1db4d9d7eae 100644
          return xicFocus;
      }
  
-+    protected int[] getOffXYRelateToFrame(ComponentPeer peer, boolean value)  {
++    protected int[] getOffXYRelateToFrame(ComponentPeer peer, boolean value) {
 +        int[] result = null;
 +        if(value && this.awtFocussedComponent!=null && this.awtFocussedComponent instanceof JTextComponent){
 +            try {
@@ -289,10 +289,11 @@ index e3b1b2d408a..1db4d9d7eae 100644
 +        }
 +        return result;
 +    }
++
  /* XAWT_HACK  FIX ME!
     do NOT call client code!
  */
-@@ -253,6 +352,6 @@ public class XInputMethod extends X11InputMethod {
+@@ -253,6 +353,6 @@ public class XInputMethod extends X11InputMethod {
      private native boolean recreateXICNative(long window, long px11data, int ctxid);
      private native int releaseXICNative(long px11data);
      private native void setXICFocusNative(long window,
