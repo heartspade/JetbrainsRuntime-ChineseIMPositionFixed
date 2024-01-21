@@ -1,3 +1,5 @@
+# 最新版本的 JetbrainsRuntime 已经修复了候选框不跟随的问题
+
 # JetbrainRuntime-ChineseIMPositionFixed
 A patch to JetbrainsRuntime to fix fcitx popup window does not show near text cursor
 
